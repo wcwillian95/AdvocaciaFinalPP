@@ -1,0 +1,76 @@
+﻿@model IEnumerable<AdvocaciaPPFinal.Models.Funcionario>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Area de Funcionários</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<div class="row">
+    <div class="col-md-6">
+        <h3>
+            Funcionários Cadastrados
+        </h3>
+    </div>
+    <div class="col-md-6">
+        <form asp-controller="Funcionarios" asp-action="Index">
+            <p>
+                <select method="get" name="SearchOption">
+                    <option value="Nome">Nome</option>
+                    <option value="CPF">CPF</option>
+                    <option value="Cargo">Cargo</option>
+                </select>
+                <b>Title: </b> <input type="text" name="SearchString" method="get">
+                <input class="btn btn-dark" type="submit" value="Filter" />
+            </p>
+        </form>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome_Funcionario)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CPF_Funcionario)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cargo_Funcionario)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataCadastro_Funcionario)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nome_Funcionario)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CPF_Funcionario)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cargo_Funcionario)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataCadastro_Funcionario)
+                </td>
+                <td>
+                    <a class="btn btn-success" asp-action="Edit" asp-route-id="@item.Id_Funcionario">Edit</a> |
+                    <a class="btn btn-warning" asp-action="Details" asp-route-id="@item.Id_Funcionario">Details</a> |
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id_Funcionario">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

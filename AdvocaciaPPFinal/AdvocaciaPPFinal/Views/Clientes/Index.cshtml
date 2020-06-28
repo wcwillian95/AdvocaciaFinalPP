@@ -1,0 +1,76 @@
+﻿@model IEnumerable<AdvocaciaPPFinal.Models.Cliente>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Clientes</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<div class="row">
+    <div class="col-md-6">
+        <h3>
+            Clientes Cadastrados
+        </h3>
+    </div>
+    <div class="col-md-6">
+        <form asp-controller="Clientes" asp-action="Index">
+            <p>
+                <select method="get" name="SearchOption">
+                    <option value="Nome">Nome</option>
+                    <option value="CPF">CPF</option>
+                    <option value="Cidade">Cidade</option>
+                </select>
+                <b>Title: </b> <input type="text" name="SearchString" method="get">
+                <input class="btn btn-dark" type="submit" value="Filter" />
+            </p>
+        </form>
+    </div>
+</div>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome_Cliente)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CPF_Cliente)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataNascimento_Cliente)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cidade)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nome_Cliente)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CPF_Cliente)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataNascimento_Cliente)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cidade)
+                </td>
+                <td>
+                    <a class="btn btn-success" asp-action="Edit" asp-route-id="@item.Id_Cliente">Edit</a> |
+                    <a class="btn btn-warning" asp-action="Details" asp-route-id="@item.Id_Cliente">Details</a> |
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id_Cliente">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
