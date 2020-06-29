@@ -10,6 +10,26 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<div class="row">
+    <div class="col-md-6">
+        <h3>
+            Livros Cadastrados
+        </h3>
+    </div>
+    <div class="col-md-6">
+        <form asp-controller="Processoes" asp-action="Index">
+            <p>
+                <select method="get" name="SearchOption">
+                    <option value="Status">Status</option>
+                    <option value="Descricao">Descrição</option>
+                </select>
+                <b>Title: </b> <input type="text" name="SearchString" method="get">
+                <input class="btn btn-dark" type="submit" value="Filter" />
+            </p>
+        </form>
+    </div>
+</div>
+
 <table class="table">
     <thead>
         <tr>
@@ -29,26 +49,28 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NomeAdvogado_Processo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NomeCliente_Processo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Data_de_Inicio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                <a class="btn btn-success" asp-action="Edit" asp-route-id="@item.Id_Processo">Edit</a> |
-                <a class="btn btn-warning" asp-action="Details" asp-route-id="@item.Id_Processo">Details</a> |
-                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id_Processo">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NomeAdvogado_Processo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NomeCliente_Processo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Data_de_Inicio)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    <a class="btn btn-success" asp-action="Edit" asp-route-id="@item.Id_Processo">Edit</a> |
+                    <a class="btn btn-warning" asp-action="Details" asp-route-id="@item.Id_Processo">Details</a> |
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id_Processo">Delete</a>
+                </td>
+            </tr>
+        }
+        <a class="btn btn-secondary text-dark" asp-area="" asp-controller="Processos" asp-action="GerarRelatorio">Gerar Relatório</a>
     </tbody>
 </table>

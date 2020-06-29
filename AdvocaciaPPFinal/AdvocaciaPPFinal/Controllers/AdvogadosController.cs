@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using AdvocaciaPPFinal.Data;
 using AdvocaciaPPFinal.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.IO;
+using PdfSharpCore.Drawing;
 
 namespace AdvocaciaPPFinal.Controllers
 {
@@ -175,5 +177,99 @@ namespace AdvocaciaPPFinal.Controllers
         {
             return _context.Advogado.Any(e => e.Id_Advogado == id);
         }
+
+        public async Task<FileResult> GerarRelatorio()
+        {
+            using (var doc = new PdfSharpCore.Pdf.PdfDocument())
+            {
+                var page = doc.AddPage();
+                page.Size = PdfSharpCore.PageSize.A4;
+                page.Orientation = PdfSharpCore.PageOrientation.Portrait;
+                var graphics = PdfSharpCore.Drawing.XGraphics.FromPdfPage(page);
+                var corFonte = PdfSharpCore.Drawing.XBrushes.Black;
+
+                var textFormatter = new PdfSharpCore.Drawing.Layout.XTextFormatter(graphics);
+                var fonteOrganzacao = new PdfSharpCore.Drawing.XFont("Arial", 10);
+                var fonteDescricao = new PdfSharpCore.Drawing.XFont("Arial", 8, PdfSharpCore.Drawing.XFontStyle.BoldItalic);
+                var titulodetalhes = new PdfSharpCore.Drawing.XFont("Arial", 14, PdfSharpCore.Drawing.XFontStyle.Bold);
+                var fonteDetalhesDescricao = new PdfSharpCore.Drawing.XFont("Arial", 7);
+
+                var logo = @"wwwroot\imagens\logo.jpg";
+
+
+
+                var qtdPaginas = doc.PageCount;
+
+                textFormatter.DrawString(qtdPaginas.ToString(), new PdfSharpCore.Drawing.XFont("Arial", 10), corFonte, new PdfSharpCore.Drawing.XRect(575, 825, page.Width, page.Height));
+
+                // Impressão do LogoTipo
+                XImage imagem = XImage.FromFile(logo);
+                graphics.DrawImage(imagem, 50, 10, 500, 100);
+
+                // Titulo Exibição
+                textFormatter.DrawString(" Nome : ", fonteDescricao, corFonte, new PdfSharpCore.Drawing.XRect(20, 130, page.Width, page.Height));
+                textFormatter.DrawString(" Agência de Advocacia ", fonteOrganzacao, corFonte, new PdfSharpCore.Drawing.XRect(80, 130, page.Width, page.Height));
+
+                textFormatter.DrawString(" Cliente : ", fonteDescricao, corFonte, new PdfSharpCore.Drawing.XRect(20, 150, page.Width, page.Height));
+                textFormatter.DrawString(" Unibrasil2020 ", fonteOrganzacao, corFonte, new PdfSharpCore.Drawing.XRect(80, 150, page.Width, page.Height));
+
+                textFormatter.DrawString(" Processo : ", fonteDescricao, corFonte, new PdfSharpCore.Drawing.XRect(20, 170, page.Width, page.Height));
+                textFormatter.DrawString(DateTime.Now.ToString(), fonteOrganzacao, corFonte, new PdfSharpCore.Drawing.XRect(80, 170, page.Width, page.Height));
+
+
+                // Titulo maior 
+                var tituloDetalhes = new PdfSharpCore.Drawing.Layout.XTextFormatter(graphics);
+                tituloDetalhes.Alignment = PdfSharpCore.Drawing.Layout.XParagraphAlignment.Center;
+                tituloDetalhes.DrawString(" Detalhes ", titulodetalhes, corFonte, new PdfSharpCore.Drawing.XRect(0, 200, page.Width, page.Height));
+
+
+                // titulo das colunas
+                var alturaTituloDetalhesY = 240;
+                var detalhes = new PdfSharpCore.Drawing.Layout.XTextFormatter(graphics);
+
+                detalhes.DrawString("Nome", fonteDescricao, corFonte, new PdfSharpCore.Drawing.XRect(30, alturaTituloDetalhesY, page.Width, page.Height));
+
+                detalhes.DrawString("CPF", fonteDescricao, corFonte, new PdfSharpCore.Drawing.XRect(130, alturaTituloDetalhesY, page.Width, page.Height));
+
+                detalhes.DrawString("Inscrição", fonteDescricao, corFonte, new PdfSharpCore.Drawing.XRect(180, alturaTituloDetalhesY, page.Width, page.Height));
+
+                detalhes.DrawString("Faculdade", fonteDescricao, corFonte, new PdfSharpCore.Drawing.XRect(230, alturaTituloDetalhesY, page.Width, page.Height));
+
+                detalhes.DrawString("Nº de Casos", fonteDescricao, corFonte, new PdfSharpCore.Drawing.XRect(290, alturaTituloDetalhesY, page.Width, page.Height));
+
+                detalhes.DrawString("Data de Nascimento", fonteDescricao, corFonte, new PdfSharpCore.Drawing.XRect(350, alturaTituloDetalhesY, page.Width, page.Height));
+
+                detalhes.DrawString("Data de Admissão", fonteDescricao, corFonte, new PdfSharpCore.Drawing.XRect(440, alturaTituloDetalhesY, page.Width, page.Height));
+
+
+
+                //dados do relatório 
+                var alturaDetalhesItens = 260;
+                var advogados = await _context.Advogado.ToListAsync();
+                foreach (var a in advogados)
+                {
+                    textFormatter.DrawString(a.Nome_Advogado, fonteDetalhesDescricao, corFonte, new PdfSharpCore.Drawing.XRect(20, alturaDetalhesItens, page.Width, page.Height));
+                    textFormatter.DrawString(a.CPF_Advogado, fonteDetalhesDescricao, corFonte, new PdfSharpCore.Drawing.XRect(120, alturaDetalhesItens, page.Width, page.Height));
+                    textFormatter.DrawString(a.Inscricao_Advogado, fonteDetalhesDescricao, corFonte, new PdfSharpCore.Drawing.XRect(180, alturaDetalhesItens, page.Width, page.Height));
+                    textFormatter.DrawString(a.Instituicao_Advogado, fonteDetalhesDescricao, corFonte, new PdfSharpCore.Drawing.XRect(230, alturaDetalhesItens, page.Width, page.Height));
+                    textFormatter.DrawString(a.Numero_casos.ToString(), fonteDetalhesDescricao, corFonte, new PdfSharpCore.Drawing.XRect(305, alturaDetalhesItens, page.Width, page.Height));
+                    textFormatter.DrawString(a.Data_de_nascimento.ToString("dd/MM/yyyy"), fonteDetalhesDescricao, corFonte, new PdfSharpCore.Drawing.XRect(360, alturaDetalhesItens, page.Width, page.Height));
+                    textFormatter.DrawString(a.DataAdmissao_Advogado.ToString("dd/MM/yyyy"), fonteDetalhesDescricao, corFonte, new PdfSharpCore.Drawing.XRect(440, alturaDetalhesItens, page.Width, page.Height));
+                    alturaDetalhesItens += 20;
+                }
+
+
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    var contantType = "application/pdf";
+                    doc.Save(stream, false);
+
+                    var nomeArquivo = "RelatorioAdvocaciaPPFinal.pdf";
+
+                    return File(stream.ToArray(), contantType, nomeArquivo);
+                }
+            }
+        }
+
     }
 }
